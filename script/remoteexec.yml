@@ -1,0 +1,35 @@
+---
+- name: Deploy YCSB on Remote Machines
+  hosts: compress_server  # Replace with the actual host or group of hosts
+
+  vars:
+    local_ycsb_path: "/path/to/local/ycsb_dds"
+    remote_ycsb_path: "/path/on/remote/"
+    remote_user: "your_remote_user"  # Replace with the actual remote user
+    remote_group: "your_remote_group"  # Replace with the actual remote group
+
+  tasks:
+    - name: Copy YCSB Directory to Remote Machine
+      copy:
+        src: "{{ local_ycsb_path }}"
+        dest: "{{ remote_ycsb_path }}"
+        owner: "{{ remote_user }}"
+        group: "{{ remote_group }}"
+        mode: "0755"
+
+    - name: Change to YCSB Directory and Run exectest.sh script
+      command: "./execycsbtest.sh -c ./ycsb_dds.conf"
+      args:
+        chdir: "{{ remote_ycsb_path }}/ycsb-dds"
+
+    - name: Archive report directory on remote machine
+      shell: "cd {{ remote_ycsb_path }}/ycsb-dds/ && tar -czvf ycsb_dds_report.tar.gz report"
+      register: result
+      ignore_errors: yes
+    - name: Fetch the compressed report archive from remote to local
+      fetch:
+        src: "{{ remote_ycsb_path }}/ycsb_dds_report.tar.gz"
+        dest: "{{ local_report_path }}"
+        flat: yes
+        when: result|success
+
