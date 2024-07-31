@@ -1,41 +1,62 @@
-SB-DDS Performance Test
+该项目是基于 YCSB 基础上开发的，方便 SequoiaDB 和 SequoiaDDS 结构化场景性能测试。
 
-YCSB-DDS is a tool that interfaces with SequoiaDDS for performance testing. It supports batch execution of tests and generates simple HTML test reports.
+##SequoiaDB性能测试##
 
-## Configuration
+测试步骤详细见`sequoiadb/README.md`
 
-1. Execute `prepare.sh` to modify the test configuration:
+##SequoiaDDS性能测试##
 
-    ```bash
-    ./prepare.sh -h
-    ```
+执行步骤如下
+```lang-bash
+./bin/prepare.sh -r 600 -s 200000000 -u 'mongodb://server1:27017,server2:27017/ycsb?replicaSet=rs0' --sqlurl 'jdbc:mysql://localhost:3306/test?user=sdbadmin&password=sdbadmin' -p sequoiadds
 
-   Options:
-   - `-h, --help`: Display this help message and exit
-   - `-r, --runtime`: Set the duration of a single test scenario
-   - `-s, --recordcount`: Set the amount of basic test data
-   - `-u, --url`: Specify the connection string for the SequoiaDDS|SequoiaDB cluster
-   - `-t, --threads`: Instruct a set of threads
-   - `-c, --testcase`: Instruct a set of test cases
-   - `-p, --product`: Specify the testing product (sequoiadb/sequoiadds)
-   - `--hostlist`: Specify the list of deployment hosts
-   - `--connstr`: Specify the MySQL connection URL
+./bin/exectest.sh
+```
 
-2. Execute `exectest.sh`:
+> **Note：**
+> SequoiaDB 和 SequoiaDDS YCSB 支持把测试结果写入 MySQL，测试命令需要指定 sqlurl。在测试前，需要先部署 MySQL，创建用户名和密码，手动创建写入的数据库。
 
-    - Locally (no arguments needed):
-      ```bash
-      ./exectest.sh
-      ```
 
-    - Remotely (specify remote machine and directory):
-      ```bash
-      bash exectest.sh -c sdbadmin:Admin@1024@192.168.30.78 -d /data/ssd1/sequoiadb
-      ```
+##项目文件介绍##
 
-   Use `-d` to specify the remote directory.
-
-3. If generating test reports, check the `report` directory for the `ycsb.html` report.
-
-**Note:** Adjust commands and options as needed for your specific use case.
+```lang-bash
+├── bin
+│   ├── bindings.properties       // YCSB 依赖库配置
+│   ├── exectest.sh               // YCSB 测试脚本，对 execycsbtest.sh 和 execycsbtest.sac.sh 脚本的封装，
+                                  // 增加了远程执行的能力
+│   ├── execycsbtest.sh           // YCSB 测试脚本，对 YCSB 原生测试脚本的封装，只能在本地执行测试
+│   ├── execycsbtest.sac.sh       // YCSB 测试脚本，对 YCSB 原生测试脚本的封装，适配 sac，只能在本地执行测试
+│   ├── prepare.sh                // YCSB 配置修改脚本
+│   ├── ycsb                      // YCSB 原生测试脚本
+│   ├── ycsb.bat                  // YCSB 原生测试脚本
+│   └── ycsb.sh                   // YCSB 原生测试脚本
+├── java                          // JDK 库，包括 x86_64 和 ARM
+├── lib                           // YCSB 测试依赖库文件
+├── LICENSE.txt                   // LICENSE 文件
+├── mongodb-binding               // SequoiaDDS YCSB 驱动包
+├── NOTICE.txt                    // NOTICE 文件
+├── README.md                     // README 文件
+├── script                        // exectest.sh 远程执行 YCSB 测试，机器和路径配置文件
+│   ├── inventory.ini
+│   └── remoteexec.yml
+├── sequoiadb
+│   ├── config.json               // ycsbPrepare.js 配置文件，通过该脚本可以自动生成
+                                  // SequoiaDB quickDeploy.sh 配置文件，
+                                  // 和修改 SequoiaDB 配置脚本
+│   ├── README.md                 // README 文件
+│   ├── run.sh                    // 对外层 exectest.sh 和 prepare.sh 脚本的封装，
+                                  // 对 SequoiaDB YCSB 的测试场景和测试配置做了标准化，可以实现一键测试
+│   ├── workloadsSample           // SequoiaDB YCSB 测试默认配置文件
+│   ├── ycsbPrepare.js            // 通过该脚本可以自动生成 SequoiaDB quickDeploy.sh 配置文件，
+                                  // 和修改 SequoiaDB 配置脚本，
+│   └── ycsbPrepare.sh            // 封装了 ycsbPrepare.js 脚本，增加了通过 sdb shell 执行脚本的能力
+├── sequoiadb-binding             // SequoiaDB YCSB 驱动包
+├── sequoiadds
+│   ├── README.md                 // README 文件
+│   ├── run.sh                    // SequoiaDDS 一键测试脚本（未实现）
+│   └── workloadsSample           // SequoiaDDS YCSB 测试默认配置文件
+├── src                           // YCSB 源码
+└── tmp
+    └── ycsb.tmp.conf             // 临时文件，存放 prepare.sh 和 exectest.sh 脚本执行过程中产生的临时数据
+```
 

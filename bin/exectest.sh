@@ -1,5 +1,8 @@
 #!/bin/bash
 
+baseDir=$(cd $(dirname $0);cd ..;pwd)
+tmpConfFile="$baseDir/tmp/ycsb.tmp.conf"
+
 function help() {
   cat << EOF
 exectest is a utility for executing SequoiaDDS/SequoiaDB YCSB tests remotely.
@@ -71,10 +74,10 @@ else
 fi
 
 if [ -z "$remotehost" ]; then
-  ./execycsbtest.sh -c ycsb_dds.conf
+  $baseDir/bin/execycsbtest.sh -c $tmpConfFile
 else
   echo >script/inventory.ini
-  echo "[compress_server]" >>script/inventory.ini  
+  echo "[compress_server]" >>script/inventory.ini
   echo "${remotehost}" >>script/inventory.ini
   transferdir=$(pwd)
   ansible-playbook  script/remoteexec.yml -i script/inventory.ini -e "local_ycsb_path=${transferdir} remote_ycsb_path=$remotedir remote_user=$remoteuser remote_group=$remoteuser"_group --extra-vars "ansible_ssh_pass=${remotepwd}" --extra-vars "ansible_ssh_user=${remoteuser}"

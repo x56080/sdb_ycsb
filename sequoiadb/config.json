@@ -1,0 +1,14 @@
+{
+   "hostname": ["192.168.30.81","192.168.30.82","192.168.30.83"],
+   "serviceNameBegin": 11800,
+   "groupNum": 6,
+   "dataDiskpath":
+   [
+      ["/ssd1/sequoiadb/database/data", "/hdd1/sequoiadb/database/data"],
+      ["/ssd2/sequoiadb/database/data", "/hdd2/sequoiadb/database/data"],
+      ["/ssd3/sequoiadb/database/data", "/hdd3/sequoiadb/database/data"],
+      ["/ssd4/sequoiadb/database/data", "/hdd4/sequoiadb/database/data"],
+      ["/ssd5/sequoiadb/database/data", "/hdd5/sequoiadb/database/data"],
+      ["/ssd6/sequoiadb/database/data", "/hdd6/sequoiadb/database/data"]
+   ]
+}

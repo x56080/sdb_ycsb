@@ -1,22 +1,24 @@
 #!/bin/bash
 set -x
-#set -e 
+#set -e
 
 # 增加失败次数判断，当失败次数大于10时终止测试
 # 需要增加如果是load时，清理之前的数据
-curdir=$(cd $(dirname $0); pwd)
+baseDir=$(cd $(dirname $0);cd ..;pwd)
+curDir=$(cd $(dirname $0);pwd)
+
 arch=$(uname -p)
 
 if [ "$arch" = "x86_64" ];then
-  export java_home="${curdir}/java/x86_64/openjdk-8u292-b10/"
+  export java_home="${baseDir}/java/x86_64/openjdk-8u292-b10/"
 else
-  export java_home="${curdir}/java/aarch64/openjdk-8u292-b10/"
+  export java_home="${baseDir}/java/aarch64/openjdk-8u292-b10/"
 fi
 
 export JAVA_HOME="$java_home"
 export PATH="$JAVA_HOME/bin:$PATH"
 threads=(1 8 16 32 64 128 256)
-workloads=(sequoiadds01 sequoiadds02 sequoiadds03 sequoiadds04)
+workloads=(workload_read workload_update workload_scan workload_insert)
 
 function check_failure()
 {
@@ -67,41 +69,51 @@ echo "Config File: $configfile"
 if [ ! -f "$configfile" ];then
   echo "Config File $configfile does not exist!"
   exit 1
-fi 
+fi
+
 . $configfile
 
-if [ -d log ];then
-   bakname=$(date +%Y%m%d%H%M)
-   mv log "log_$bakname"
+workloadSamplesDirPrfix=""
+if [ "$product" = "sequoiadb" ]; then
+  workloadSamplesDirPrfix="$baseDir/sequoiadb"
+elif [ "$product" = "sequoiadds" ]; then
+  workloadSamplesDirPrfix="$baseDir/sequoiadds"
+else
+  echo "Error: 'product' parameter must be 'sequoiadb' or 'sequoiadds'"
+  exit 1
 fi
-mkdir -p log
 
-workloadfile="workloads/sequoiaddsload"
+if [ -d $workloadSamplesDirPrfix/log ];then
+   bakname=$(date +%Y%m%d%H%M)
+   mv $workloadSamplesDirPrfix/log "$workloadSamplesDirPrfix/log_$bakname"
+fi
+mkdir -p $workloadSamplesDirPrfix/log
+
+workloadfile="$workloadSamplesDirPrfix/workloads/workload"
 check_file_exist "$workloadfile"
 
 recordcount=$(grep recordcount $workloadfile |awk -F '=' '{print $2}')
-if [ ! -f $curdir/.load ] || [ $loaddata -eq 1 ];then
-   logfile="log/sequoiaddsload_100"
-   bin/ycsb load ${product} -P $workloadfile  -s -p threadcount=100 1>>${logfile} 2>&1
+if [ ! -f $baseDir/.load ] || [ $loaddata -eq 1 ];then
+   logfile="$workloadSamplesDirPrfix/log/workload_100"
+   $baseDir/bin/ycsb load ${product} -P $workloadfile -s -p threadcount=100 1>>${logfile} 2>&1
    ret=$?
    check_failure $logfile
    if [[ $? -ne 0 || $ret -ne 0  ]];then
        cat $logfile
        exit 1
    else
-      touch $curdir/.load
+      touch $baseDir/.load
    fi
 fi
 
 length=${#workloads[@]}
 for ((i=0; i<$length; i++));
-do 
+do
    workload="${workloads[i]}"
-   workloadfile="workloads/${workload}"
+   workloadfile="$workloadSamplesDirPrfix/workloads/${workload}"
    check_file_exist $workloadfile
    modpara=0
-   if [ "$workload" = "sequoiadds04" ];then
-      workloadfile="workloads/${workload}"
+   if [ "$workload" = "workload_insert" ];then
       origrecordcount=$(grep recordcount ${workloadfile} |awk -F '=' '{print $2}')
       originsertstart=$(grep insertstart ${workloadfile} |awk -F '=' '{print $2}')
       operationcount=$(grep operationcount ${workloadfile} |awk -F '=' '{print $2}')
@@ -120,8 +132,8 @@ do
          sed -i "s/recordcount=${origrecordcount}/recordcount=${recordcount}/g" ${workloadfile}
          sed -i "s/insertstart=${originsertstart}/insertstart=${recordcount}/g" ${workloadfile}
       fi
-      logfile="log/${workload}_${thread}"
-      bin/ycsb run ${product} -P $workloadfile  -s -p threadcount=$thread -p generatereport=$generateReport 1>>${logfile} 2>&1
+      logfile="$workloadSamplesDirPrfix/log/${workload}_${thread}"
+      $baseDir/bin/ycsb run ${product} -P $workloadfile  -s -p threadcount=$thread -p generatereport=$generateReport 1>>${logfile} 2>&1
       ret=$?
       check_failure $logfile
       if [[ $? -ne 0  || $ret -ne 0 ]];then

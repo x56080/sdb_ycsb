@@ -23,22 +23,22 @@
 #   Request distribution: zipfian
 
 recordcount=10000000
-operationcount=2000000000
+operationcount=1000000
+insertstart=0
 workload=site.ycsb.workloads.CoreWorkload
 
 readallfields=true
 
-batchsize=5000
-readproportion=1
+batchsize=1
+readproportion=0
 updateproportion=0
 scanproportion=0
-insertproportion=0
+insertproportion=1
 
 core_workload_insertion_retry_limit=3
 requestdistribution=zipfian
 sequoiadb.maxConnectionnum=1200
-maxexecutiontime=600
-db.url=jdbc:mysql://127.0.0.1:3306/test?useSSL=false
-db.user=sdbadmin
-db.password=sdbadmin
-
+maxexecutiontime=3600
+#db.url=jdbc:mysql://127.0.0.1:3306/test?useSSL=false
+#db.user=sdbadmin
+#db.password=sdbadmin

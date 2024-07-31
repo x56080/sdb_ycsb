@@ -22,7 +22,7 @@
 #   Default data size: 1 KB records (10 fields, 100 bytes each, plus key)
 #   Request distribution: zipfian
 
-recordcount=1000000
+recordcount=10000000
 operationcount=2000000000
 workload=site.ycsb.workloads.CoreWorkload
 
@@ -37,8 +37,7 @@ insertproportion=0
 core_workload_insertion_retry_limit=3
 requestdistribution=zipfian
 sequoiadb.maxConnectionnum=1200
-maxexecutiontime=300
-db.url=jdbc:mysql://127.0.0.1:3306/test?useSSL=false
-db.user=sdbadmin
-db.password=sdbadmin
-mongodb.url=mongodb://192.168.24.112:27017, mongodb://192.168.24.113:27017, mongodb://192.168.24.114:27017/ycsb?replicaSet=rs0
+maxexecutiontime=600
+#db.url=jdbc:mysql://127.0.0.1:3306/test?useSSL=false
+#db.user=sdbadmin
+#db.password=sdbadmin
