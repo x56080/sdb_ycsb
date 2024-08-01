@@ -113,14 +113,13 @@ public class SequoiaDbClient extends DB {
       }
       if (INIT_COUNT.decrementAndGet() == 0) {
         sdbClient.close();
+        cs = null;
+        sdbClient = null;
       }
     } catch (Exception e1) {
       System.err.println("Could not close SequoiaDB connection pool: " + e1.toString());
       e1.printStackTrace();
       return;
-    } finally {
-      cs = null;
-      sdbClient = null;
     }
   }
 

@@ -43,7 +43,7 @@ for (let groupIndex = 0; groupIndex < groupNum; groupIndex++) {
 }
 
 code += 'var db = new Sdb();' + '\n';
-code += 'db.getRecycleBin().alter({AutoDrop:true,MaxItemNum:30});' + '\n';
+code += 'db.getRecycleBin().disable();' + '\n';
 code += 'db.updateConf({diaglevel:0,auditmask:""});' + '\n';
 
 var sdbDeployConfFile = new File("sequoiadb.conf",0644,SDB_FILE_READWRITE|SDB_FILE_CREATE|SDB_FILE_REPLACE);
