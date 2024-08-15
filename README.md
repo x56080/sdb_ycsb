@@ -1,10 +1,10 @@
 该项目是基于 YCSB 基础上开发的，方便 SequoiaDB 和 SequoiaDDS 结构化场景性能测试。
 
-##SequoiaDB性能测试##
+## SequoiaDB性能测试
 
 测试步骤详细见`sequoiadb/README.md`
 
-##SequoiaDDS性能测试##
+## SequoiaDDS性能测试
 
 执行步骤如下
 ```lang-bash
@@ -17,7 +17,7 @@
 > SequoiaDB 和 SequoiaDDS YCSB 支持把测试结果写入 MySQL，测试命令需要指定 sqlurl。在测试前，需要先部署 MySQL，创建用户名和密码，手动创建写入的数据库。
 
 
-##项目文件介绍##
+## 项目文件介绍
 
 ```lang-bash
 ├── bin
@@ -40,16 +40,16 @@
 │   ├── inventory.ini
 │   └── remoteexec.yml
 ├── sequoiadb
-│   ├── config.json               // ycsbPrepare.js 配置文件，通过该脚本可以自动生成
+│   ├── config.json               // sdbPrepare.js 配置文件，通过该脚本可以自动生成
                                   // SequoiaDB quickDeploy.sh 配置文件，
                                   // 和修改 SequoiaDB 配置脚本
 │   ├── README.md                 // README 文件
 │   ├── run.sh                    // 对外层 exectest.sh 和 prepare.sh 脚本的封装，
                                   // 对 SequoiaDB YCSB 的测试场景和测试配置做了标准化，可以实现一键测试
 │   ├── workloadsSample           // SequoiaDB YCSB 测试默认配置文件
-│   ├── ycsbPrepare.js            // 通过该脚本可以自动生成 SequoiaDB quickDeploy.sh 配置文件，
+│   ├── sdbPrepare.js             // 通过该脚本可以自动生成 SequoiaDB quickDeploy.sh 配置文件，
                                   // 和修改 SequoiaDB 配置脚本，
-│   └── ycsbPrepare.sh            // 封装了 ycsbPrepare.js 脚本，增加了通过 sdb shell 执行脚本的能力
+│   └── sdbPrepare.sh             // 封装了 sdbPrepare.js 脚本，增加了通过 sdb shell 执行脚本的能力
 ├── sequoiadb-binding             // SequoiaDB YCSB 驱动包
 ├── sequoiadds
 │   ├── README.md                 // README 文件

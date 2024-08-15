@@ -9,8 +9,8 @@ function build_help()
    echo "                         a update SequoiaDB config script file"
    echo "                       - update: It will execute the update lob config script file"
    echo "Example: "
-   echo "  ./ycsbPrepare.sh --action generate"
-   echo "  ./ycsbPrepare.sh --action update"
+   echo "  ./sdbPrepare.sh --action generate"
+   echo "  ./sdbPrepare.sh --action update"
    echo ""
 }
 
@@ -49,9 +49,9 @@ do
 done
 
 if [ "$action" = "generate" ]; then
-  jsFile="$myPath/ycsbPrepare.js"
+  jsFile="$myPath/sdbPrepare.js"
 elif [ "$action" = "update" ]; then
-  jsFile="$myPath/updateLobConf.js"
+  jsFile="$myPath/updateConfs.js"
 else
   echo "Error: 'action' parameter must be 'generate' or 'update'"
   exit 1
