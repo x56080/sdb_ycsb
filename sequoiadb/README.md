@@ -123,3 +123,6 @@ SequoiaDB YCSB 性能测试工具
    mysql> drop table test_results;
    mysql> drop table test_config;
    ```
+
+   > **Note：**
+   > 飞书性能报告文档整理详见外网飞书各版本（如5.8.3）性能测试报告。
